@@ -1,0 +1,45 @@
+<h1>Vote on <%= @poll.name %></h1>
+
+<%= form_with(model: [@poll, @voter], url: poll_voters_path, local: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :name, "Your Name" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <h2>Your Choices</h2>
+  <% @poll.poll_choices.each do |choice| %>
+    <div>
+      <%= form.label "Rank" %>:
+      <%= form.number_field "choices[#{choice.id}]",
+                            name: "choices[#{choice.id}]",
+                            class: "rank-input",
+                            min: 1,
+                            max: @poll.poll_choices.count %>
+      <%= choice.name %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit "Submit Vote", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("input", (event) => {
+    if (event.target.classList.contains("rank-input")) {
+      const inputs = document.querySelectorAll(".rank-input");
+      const chosenRanks = new Set();
+
+      // Highlight duplicates
+      inputs.forEach(input => {
+        const value = input.value;
+        if (value && chosenRanks.has(value)) {
+          input.setCustomValidity("This rank is already chosen. Please choose a unique rank.");
+        } else {
+          input.setCustomValidity("");
+          chosenRanks.add(value);
+        }
+      });
+    }
+  });
+</script>

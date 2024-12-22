@@ -1,0 +1,50 @@
+<h1>Create a New Poll</h1>
+
+<%= form_with(model: @poll, url: polls_path, local: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :name, "Poll Name" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <h2>Poll Choices</h2>
+  <div id="poll-choices">
+    <%= form.fields_for :poll_choices do |choice_form| %>
+      <div class="form-group">
+        <%= choice_form.label :name, "Choice Name" %>
+        <%= choice_form.text_field :name, class: "form-control" %>
+        <%= link_to "Remove", "#", class: "remove-choice" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= link_to "Add Choice", "#", id: "add-choice" %>
+  <div class="actions">
+    <%= form.submit "Save Poll", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%= javascript_tag do %>
+  document.addEventListener("DOMContentLoaded", () => {
+    const addChoiceButton = document.getElementById("add-choice");
+    const pollChoicesDiv = document.getElementById("poll-choices");
+
+    addChoiceButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const newField = document.createElement("div");
+      newField.classList.add("form-group");
+      newField.innerHTML = `
+        <label for="poll_poll_choices_attributes_new_name">Choice Name</label>
+        <input type="text" name="poll[poll_choices_attributes][][name]" class="form-control" />
+        <a href="#" class="remove-choice">Remove</a>
+      `;
+      pollChoicesDiv.appendChild(newField);
+    });
+
+    pollChoicesDiv.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-choice")) {
+        e.preventDefault();
+        e.target.parentElement.remove();
+      }
+    });
+  });
+<% end %>
