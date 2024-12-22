@@ -44,6 +44,26 @@ class PollsController < ApplicationController
     end
   end
 
+  # Calculates the winner of a ranked-choice voting poll.
+  #
+  # This method processes a ranked-choice voting system by iterating through
+  # rounds of elimination. During each iteration, it identifies the candidate
+  # with the lowest votes and increments each voter's active rank to their next
+  # preferred choice after the elimination. The process continues until a winner
+  # is determined or until only two candidates remain.
+  #
+  # The calculations involve aggregating votes based on currently active ranks
+  # for each voter, determining the winner candidate with a majority, and
+  # recording each iteration's results for further analysis.
+  #
+  # === Parameters
+  #
+  # * `voters` (Array) - A collection of voter objects participating in the poll.
+  #
+  # === Returns
+  #
+  # Returns the winning candidate once a candidate surpasses the required majority
+  # or only two candidates remain.
   def calculate_winner(voters)
     @iterations = []
     @iteration_winners = []
