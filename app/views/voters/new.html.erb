@@ -15,13 +15,14 @@
     <% @poll.poll_choices.each_with_index do |choice, index| %>
       <div class="list-item">
         <%= form.label "Rank" %>:
-        <%= form.number_field "choices[#{choice.id}]",
+        <%= form.hidden_field "choices[#{choice.id}]",
                               name: "choices[#{choice.id}]",
                               class: "rank-input",
                               min: 1,
                               max: @poll.poll_choices.count,
-                              value: index + 1%>
-        <%= choice.name %>
+                              value: index + 1,
+                              readonly: true %>
+        <span class="input-label"><%= index + 1 %></span> <%= choice.name %>
       </div>
     <% end %>
   </div>
@@ -42,6 +43,10 @@
               const rankInput = item.querySelector(".rank-input");
               if (rankInput) {
                   rankInput.value = index + 1;
+              }
+              const inputLabel = item.querySelector(".input-label");
+              if (inputLabel){
+                  inputLabel.text = index + 1;
               }
           });
       }
