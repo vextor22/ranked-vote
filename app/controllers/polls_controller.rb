@@ -1,5 +1,5 @@
 class PollsController < ApplicationController
-  before_action :set_poll, only: [:show, :share]
+  before_action :set_poll, only: [ :show, :share ]
   def index
     @poll = Poll.new
   end
@@ -21,7 +21,7 @@ class PollsController < ApplicationController
   end
 
   def poll_params
-    params.require(:poll).permit(:name, poll_choices_attributes: [:id, :name, :_destroy])
+    params.require(:poll).permit(:name, poll_choices_attributes: [ :id, :name, :_destroy ])
   end
 
 
@@ -62,7 +62,7 @@ class PollsController < ApplicationController
 
       # Count up the current votes
       result_choices.each do |result|
-        iteration_data << {choice: result[:poll_choice], vote_count: result[:voter_choices].select {
+        iteration_data << { choice: result[:poll_choice], vote_count: result[:voter_choices].select {
             |choice|
             choice.rank == voters_active_rank[choice.voter_id]
           }.sum { |vote| 1 }
@@ -75,13 +75,13 @@ class PollsController < ApplicationController
       end
       # Record the votes
       puts "Iteration: #{iteration_data}"
-      @current_winner = iteration_data.max_by {|ir| ir[:vote_count]}
+      @current_winner = iteration_data.max_by { |ir| ir[:vote_count] }
       puts "Winner #{@current_winner}"
       @iteration_winners << @current_winner
       @iterations << iteration_data
       current_loser = iteration_data.min_by { |ir| ir[:vote_count] }
       puts "Loser #{current_loser}"
-      loser_result = result_choices.find {|result| result[:poll_choice].id == current_loser[:choice].id}
+      loser_result = result_choices.find { |result| result[:poll_choice].id == current_loser[:choice].id }
       loser_result[:voter_choices].each do |choice|
         if choice.rank == voters_active_rank[choice.voter_id]
           voters_active_rank[choice.voter_id] = voters_active_rank[choice.voter_id] + 1
@@ -94,5 +94,4 @@ class PollsController < ApplicationController
 
     end
   end
-
 end

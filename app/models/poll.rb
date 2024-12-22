@@ -6,5 +6,4 @@ class Poll < ApplicationRecord
   accepts_nested_attributes_for :poll_choices, allow_destroy: true
 
   validates :name, presence: true
-
 end

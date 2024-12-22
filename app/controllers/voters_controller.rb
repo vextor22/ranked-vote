@@ -1,5 +1,5 @@
 class VotersController < ApplicationController
-  before_action :set_poll, only: [:new, :create] # Fix here: Use :new as a symbol
+  before_action :set_poll, only: [ :new, :create ] # Fix here: Use :new as a symbol
 
   def new
     @voter = @poll.voters.new
@@ -33,6 +33,10 @@ class VotersController < ApplicationController
   end
 
   def voter_choices_params
-    params.require(:choices).permit!
+    allowed_choice_ids = @poll.poll_choices.pluck(:id)
+                              .map(&:to_s)
+    choices = params.require(:choices)
+
+    choices.permit(allowed_choice_ids)
   end
 end

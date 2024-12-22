@@ -17,8 +17,6 @@ Rails.application.routes.draw do
     member do
       get :share # Route for the shareable URL
     end
-    resources :voters, only: [:new, :create]
+    resources :voters, only: [ :new, :create ]
   end
-
-
 end
