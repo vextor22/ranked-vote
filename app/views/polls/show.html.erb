@@ -1,14 +1,21 @@
-<h1><%= @poll.name %></h1>
+<h1>Ballot: <%= @poll.name %></h1>
 
-<h2>Poll Results</h2>
-<h3>Current Winner:</h3>
-<div>
-  <b><%= @current_winner[:choice].name %></b>
-</div>
+<hr>
+
+<h2>Voting Results</h2>
+<h3>Winner:
+<b><%= @current_winner[:choice].name %></b>
+</h3>
+<hr>
+<h2>Share this Poll:</h2>
+<p>URL: <%= link_to share_poll_url(@poll), share_poll_url(@poll) %></p>
+
+<hr>
+<br>
 <ul>
   <% @results.each do |result| %>
-  <div>
-    <h3><%= result[:poll_choice].name %></h3>
+  <div class="border border-black border-solid p-4">
+    <h3>Choice: <%= result[:poll_choice].name %></h3>
     <% result[:voter_choices].each do |voter_choice| %>
     <p><%= voter_choice.voter.name %> <%= voter_choice.rank %></p>
     <% end %>
@@ -16,8 +23,10 @@
   <% end %>
 </ul>
 
-<h2>Share this Poll:</h2>
-<p>URL: <%= link_to share_poll_url(@poll), share_poll_url(@poll) %></p>
+<hr>
+
+
+<hr>
 
 <h2>Audit log:</h2>
 <% @iterations.each_with_index do |iteration,index| %>
@@ -27,4 +36,6 @@
       Choice: <%= choice[:choice].name %>, score: <%= choice[:vote_count] %>
     <% end %>
   </div>
+  <hr>
+
 <% end %>
