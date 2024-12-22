@@ -1,5 +1,10 @@
 <h1>Create a New Poll</h1>
 
+
+
+<!-- Latest Sortable -->
+<script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+
 <%= form_with(model: @poll, url: polls_path, local: true) do |form| %>
   <div class="form-group">
     <%= form.label :name, "Poll Name" %>
@@ -7,9 +12,9 @@
   </div>
 
   <h2>Poll Choices</h2>
-  <div id="poll-choices">
+  <div id="poll-choices" class="list-group">
     <%= form.fields_for :poll_choices do |choice_form| %>
-      <div class="form-group">
+      <div class="form-group list-item">
         <%= choice_form.label :name, "Choice Name" %>
         <%= choice_form.text_field :name, class: "form-control" %>
         <%= link_to "Remove", "#", class: "remove-choice" %>
@@ -24,6 +29,10 @@
 <% end %>
 
 <%= javascript_tag do %>
+  var el = document.getElementById('poll-choices');
+  Sortable.create(el, { /* options */ });
+
+
   document.addEventListener("DOMContentLoaded", () => {
     const addChoiceButton = document.getElementById("add-choice");
     const pollChoicesDiv = document.getElementById("poll-choices");

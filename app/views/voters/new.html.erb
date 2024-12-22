@@ -1,5 +1,8 @@
 <h1>Vote on <%= @poll.name %></h1>
 
+<!-- Latest Sortable -->
+<script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+
 <%= form_with(model: [@poll, @voter], url: poll_voters_path, local: true) do |form| %>
   <div class="form-group">
     <%= form.label :name, "Your Name" %>
@@ -7,17 +10,21 @@
   </div>
 
   <h2>Your Choices</h2>
-  <% @poll.poll_choices.each do |choice| %>
-    <div>
-      <%= form.label "Rank" %>:
-      <%= form.number_field "choices[#{choice.id}]",
-                            name: "choices[#{choice.id}]",
-                            class: "rank-input",
-                            min: 1,
-                            max: @poll.poll_choices.count %>
-      <%= choice.name %>
-    </div>
-  <% end %>
+  <div id="choice-list" class="list-group">
+
+    <% @poll.poll_choices.each_with_index do |choice, index| %>
+      <div class="list-item">
+        <%= form.label "Rank" %>:
+        <%= form.number_field "choices[#{choice.id}]",
+                              name: "choices[#{choice.id}]",
+                              class: "rank-input",
+                              min: 1,
+                              max: @poll.poll_choices.count,
+                              value: index + 1%>
+        <%= choice.name %>
+      </div>
+    <% end %>
+  </div>
 
   <div class="actions">
     <%= form.submit "Submit Vote", class: "btn btn-primary" %>
@@ -25,6 +32,21 @@
 <% end %>
 
 <script>
+
+  var el = document.getElementById("choice-list")
+  Sortable.create(el, {
+      animation: 150,
+      onEnd: function () {
+          const items = el.querySelectorAll(".list-item");
+          items.forEach((item, index) => {
+              const rankInput = item.querySelector(".rank-input");
+              if (rankInput) {
+                  rankInput.value = index + 1;
+              }
+          });
+      }
+  });
+
   document.addEventListener("input", (event) => {
     if (event.target.classList.contains("rank-input")) {
       const inputs = document.querySelectorAll(".rank-input");
