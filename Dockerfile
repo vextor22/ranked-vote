@@ -23,10 +23,11 @@ RUN gem update --system --no-document && \
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
-# Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential libpq-dev pkg-config
-
+    apt-get install --no-install-recommends -y build-essential libpq-dev pkg-config curl gnupg && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update -qq && apt-get install --no-install-recommends -y yarn
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
