@@ -53,11 +53,9 @@ class PollsController < ApplicationController
     end
     vote_count = result_choices[0][:voter_choices].length
     current_winner = nil
-    iteration_count = 0
-    while not current_winner or current_winner[:vote_count] < vote_count/2 do
-      if iteration_count > vote_count
-        break
-      end
+
+    # Iterate until we have a winner
+    while not current_winner or not (current_winner[:vote_count] > vote_count/2) do
       iteration_data = []
 
       # Count up the current votes
@@ -69,28 +67,41 @@ class PollsController < ApplicationController
         }
       end
 
-      if iteration_data.length == 0
-        @vote_tie = true
-        break
-      end
       # Record the votes
       puts "Iteration: #{iteration_data}"
       @current_winner = iteration_data.max_by { |ir| ir[:vote_count] }
       puts "Winner #{@current_winner}"
       @iteration_winners << @current_winner
       @iterations << iteration_data
+
+      # If we're down to two choices, stop iterating, we're done.
+      if result_choices.length == 2
+        break
+      end
+
+      # Otherwise, pick a loser and remove it, updating any user's vote
+      # rank to their next best option
       current_loser = iteration_data.min_by { |ir| ir[:vote_count] }
       puts "Loser #{current_loser}"
       loser_result = result_choices.find { |result| result[:poll_choice].id == current_loser[:choice].id }
+      # Remove the loser result from @results
+      result_choices.delete_if { |result| result[:poll_choice].id == current_loser[:choice].id }
+
       loser_result[:voter_choices].each do |choice|
         if choice.rank == voters_active_rank[choice.voter_id]
-          voters_active_rank[choice.voter_id] = voters_active_rank[choice.voter_id] + 1
+          next_best_rank = result_choices.map do
+            |r|
+            r[:voter_choices].find {
+              |pc| pc.voter_id == choice.voter_id
+            }.rank
+          end.compact.min
+          voters_active_rank[choice.voter_id] = next_best_rank
         end
       end
       puts "Active ranks: #{voters_active_rank}"
-      iteration_count = iteration_count + 1
-      # Remove the loser result from @results
-      result_choices.delete_if { |result| result[:poll_choice].id == current_loser[:choice].id }
+
+
+
 
     end
   end
