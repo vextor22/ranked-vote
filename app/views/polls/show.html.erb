@@ -8,8 +8,9 @@
 </h3>
 <hr>
 <h2>Share this Poll:</h2>
-<p>URL: <%= link_to share_poll_url(@poll), share_poll_url(@poll) %></p>
-
+URL: <%= link_to share_poll_url(@poll), share_poll_url(@poll) %>
+<button id="copy-button" class="bg-blue-500 text-white px-1 py-0.5 text-[10px] rounded-md">Copy</button>
+<span id="copy-success" class="text-success"></span>
 <hr>
 <br>
 <ul>
@@ -39,3 +40,39 @@
   <hr>
 
 <% end %>
+
+
+<script>
+    document.getElementById("copy-button").addEventListener("click", function () {
+        // Define the link you want to copy
+        const linkToCopy = "<%= share_poll_url(@poll) %>";
+
+        // Use Clipboard API to copy the link
+        navigator.clipboard.writeText(linkToCopy).then(() => {
+            const el = document.getElementById("copy-success");
+            el.textContent = "👍";
+            // Make it visible
+            el.style.transition = "none";
+            el.style.opacity = 1;
+
+            void el.offsetWidth;
+
+
+            el.style.transition = "opacity 1s"; // Add a fade-out transition
+            el.style.opacity = 0; // Make it fade out
+        }).catch((err) => {
+            el.textContent = "👎";
+            // Make it visible
+            el.style.transition = "none";
+            el.style.opacity = 1;
+
+            void el.offsetWidth;
+
+
+            el.style.transition = "opacity 1s"; // Add a fade-out transition
+            el.style.opacity = 0; // Make it fade out
+            console.error("Failed to copy text: ", err);
+        });
+
+    });
+</script>
