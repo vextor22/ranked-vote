@@ -29,7 +29,8 @@
   </div>
 
   <div class="actions mt-6">
-    <%= form.submit "Submit Vote", class: "btn btn-primary bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" %>
+    <%= form.submit "Submit Vote", class: "btn btn-primary bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" %>
+    <a href="<%= poll_path(@poll) %>" class="btn btn-secondary bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600">Just let me see results</a>
   </div>
 <% end %>
 
