@@ -31,7 +31,7 @@ class PollsController < ApplicationController
 
   private
   def set_poll
-    @poll = Poll.find(params[:id])
+    @poll = Poll.includes(poll_choices: { voter_choices: :voter }).find(params[:id])
   end
   def calculate_results
     # A mock example: Count how many times each choice has been selected by voters
